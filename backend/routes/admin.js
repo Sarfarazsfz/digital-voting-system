@@ -6,10 +6,12 @@ import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Admin login
+// Admin login - UPDATE THIS PART
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
+
+    console.log('🔐 Admin login attempt for:', username);
 
     // Validate input
     if (!username || !password) {
@@ -17,12 +19,19 @@ router.post('/login', async (req, res) => {
     }
 
     const admin = await Admin.findOne({ username });
+    console.log('📋 Admin found:', admin ? 'Yes' : 'No');
+
     if (admin && (await admin.matchPassword(password))) {
+      // Use fallback secret if environment variable is not set
+      const jwtSecret = process.env.JWT_SECRET || 'fallback_secret_key_for_development';
+      
       const token = jwt.sign(
         { id: admin._id, username: admin.username },
-        process.env.JWT_SECRET,
+        jwtSecret,
         { expiresIn: '7d' }
       );
+
+      console.log('✅ Admin login successful:', admin.username);
 
       res.json({
         token,
@@ -33,10 +42,11 @@ router.post('/login', async (req, res) => {
         }
       });
     } else {
+      console.log('❌ Invalid credentials for:', username);
       res.status(401).json({ message: 'Invalid credentials' });
     }
   } catch (error) {
-    console.error('Admin login error:', error);
+    console.error('💥 Admin login error:', error);
     res.status(500).json({ message: 'Server error during login' });
   }
 });
@@ -218,7 +228,7 @@ router.get('/elections/:id/results', auth, async (req, res) => {
       return res.status(400).json({ message: 'Invalid election ID' });
     }
     
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Error fetching results: ' + error.message 
     });
   }
@@ -232,7 +242,7 @@ router.put('/elections/:id/status', auth, async (req, res) => {
     // Validate status
     const validStatuses = ['upcoming', 'active', 'completed'];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Invalid status. Must be: upcoming, active, or completed' 
       });
     }
@@ -258,7 +268,7 @@ router.put('/elections/:id/status', auth, async (req, res) => {
       return res.status(400).json({ message: 'Invalid election ID' });
     }
     
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Error updating election status: ' + error.message 
     });
   }
@@ -347,7 +357,7 @@ router.delete('/elections/:id', auth, async (req, res) => {
       return res.status(400).json({ message: 'Invalid election ID' });
     }
     
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Error deleting election: ' + error.message 
     });
   }
