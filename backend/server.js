@@ -1,3 +1,4 @@
+// server.js
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -14,17 +15,45 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Root + health routes
+app.get('/', (req, res) => {
+  res.send('Server is running. Use /health or API routes under /api.');
+});
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+// API routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/voter', voterRoutes);
 app.use('/api/election', electionRoutes);
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/voting_system')
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.log('MongoDB connection error:', err));
+// Read connection string from env
+const mongoURI = process.env.MONGODB_URI;
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Start server and connect to MongoDB
+async function startServer() {
+  try {
+    if (!mongoURI) {
+      console.error('ERROR: MONGODB_URI is not set. Add it in environment variables.');
+      process.exit(1);
+    }
+
+    await mongoose.connect(mongoURI);
+    console.log('MongoDB connected');
+
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  }
+}
+
+// graceful shutdown for unhandled rejections
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+  process.exit(1);
 });
+
+startServer();
