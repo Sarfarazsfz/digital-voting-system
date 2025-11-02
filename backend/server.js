@@ -40,7 +40,7 @@ async function startServer() {
     await mongoose.connect(mongoURI);
     console.log('MongoDB connected');
 
-    const PORT = process.env.PORT || "https://digital-voting-system-frontend.onrender.com";
+    const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
