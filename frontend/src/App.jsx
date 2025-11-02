@@ -22,8 +22,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           
           {/* Protected Admin Routes */}
-          <Route 
-            path="/admin/dashboard" 
+          <Route
+            path="/admin/dashboard"
             element={
               <ProtectedRoute requiredUserType="admin">
                 <AdminDashboard />
@@ -42,20 +42,20 @@ function App() {
           />
           
           <Route 
-            path="/voting/:electionId" 
+            path="/voting/:electionId"
             element={
               <ProtectedRoute requiredUserType="voter">
                 <VotingBooth />
               </ProtectedRoute>
-            } 
+            }
           />
           
           {/* Redirect to appropriate dashboard based on user type */}
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               user ? (
-                userType === 'admin' ? 
+                userType === 'admin' ?
                   <Navigate to="/admin/dashboard" replace /> : 
                   <Navigate to="/voter/dashboard" replace />
               ) : (
