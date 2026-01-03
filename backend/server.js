@@ -27,9 +27,9 @@ app.use('/setup', setupRoutes); // Setup routes
 // Test routes
 app.get('/', (req, res) => {
   res.json({ 
-    message: '🚀 SpringVote Backend Server is Running!',
+    message: 'SpringVote Backend Server is Running!',
     version: '1.0.0',
-    status: 'Active ✅',
+    status: 'Active',
     timestamp: new Date().toISOString(),
     endpoints: {
       admin: {
@@ -69,8 +69,8 @@ const connectDB = async () => {
     const mongoURI = process.env.MONGODB_URI;
     
     if (!mongoURI) {
-      console.log('❌ MONGODB_URI is not set in environment variables');
-      console.log('💡 Please set MONGODB_URI in your Render environment variables');
+      console.log('MONGODB_URI is not set in environment variables');
+      console.log('Please set MONGODB_URI in your Render environment variables');
       return;
     }
     
@@ -79,11 +79,11 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     });
     
-    console.log('✅ MongoDB Connected Successfully!');
-    console.log(`📊 Database: ${mongoose.connection.db.databaseName}`);
+    console.log('MongoDB Connected Successfully!');
+    console.log(`Database: ${mongoose.connection.db.databaseName}`);
     
   } catch (error) {
-    console.error('❌ MongoDB Connection Failed:', error.message);
+    console.error('MongoDB Connection Failed:', error.message);
   }
 };
 
@@ -94,14 +94,14 @@ const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
   console.log('='.repeat(60));
-  console.log('🚀 DIGITAL BACKEND SERVER STARTED');
+  console.log('DIGITAL BACKEND SERVER STARTED');
   console.log('='.repeat(60));
-  console.log(`📍 Port: ${PORT}`);
-  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Port: ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 MongoDB: ${process.env.MONGODB_URI ? 'Configured' : 'Not configured'}`);
-  console.log(`📊 DB Status: ${mongoose.connection.readyState === 1 ? 'Connected ✅' : 'Disconnected ❌'}`);
+  console.log(`DB Status: ${mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'}`);
   console.log('='.repeat(60));
-  console.log('📋 Quick Setup:');
+  console.log('Quick Setup:');
   console.log('   1. Visit: https://digital-voting-system-backend.onrender.com/setup/create-admin');
   console.log('   2. Use credentials: admin / admin123');
   console.log('='.repeat(60));
